@@ -7,84 +7,150 @@ router = APIRouter()
 
 BASE = "https://api.coingecko.com/api/v3"
 KEY  = os.getenv("CG_API_KEY_REDACTED")
-_CHART_CACHE: dict[tuple[str,int], tuple[float,dict]] = {}
-_HEADERS = {"CG_API_KEY_REDACTED": KEY} if KEY else {}
-CHART_TTL = 300
+HEADERS = {"CG_API_KEY_REDACTED": KEY} if KEY else {}
 
-# Market chart -----
-async def fetch_chart(cg_id:str, days:int)->dict:
+
+# TTL cache creation -> Pls check on this later to trully understand future me
+@dataclass
+class Entry:
+    ts: float
+    data: any
+
+
+class TTLCache:
+    def __init__(self)->None:
+        self._store: Dict[tuple, Entry] = {}
+
     
+    def get(self, key: tuple, ttl_seconds: int) -> Optional[Any]:
+        e = self._store.get(key)
+        if not e:
+            return None
+        if time.time() - e.ts < ttl_seconds:
+            return e.data
+        #expired
+        self._store.pop(key, None)
+        return None
+    
+
+    def set(self, key: tuple, data: Any) -> None:
+        self._store[key] = Entry(time.time(),data)
+
+    
+    def clear(self) -> None:
+        self._store.clear()
+    
+
+    def key(self) -> List[tuple]:
+        return list(self._store.key())
+    
+
+
+# Varible of cache for each data
+CHART_CACHE = TTLCache()
+MARKETS_CACHE = TTLCache()
+
+# Tunable TTLs
+CHART_TTL = 300
+MARKETS_TTL = 60
+
+
+# Fetch the chart
+async def fetch_market_chart(cg_id: str, days: int) -> dict:
     async with httpx.AsyncClient(timeout=httpx.Timeout(10, connect=5)) as c:
-        r = await c.get(
+         r = await c.get(
             f"{BASE}/coins/{cg_id}/market_chart",
             params={"vs_currency": "usd", "days": days},
-            headers=_HEADERS,
+            headers=HEADERS,
         )
-        
     if r.status_code != 200:
-        raise HTTPException(r.status_code, r.text)
+        raise HTTPException(status_code=r.status_code, detail=r.text)
     return r.json()
 
 
-async def get_chart(cg_id: str, days: int) -> dict:
+async def fetch_market_chart_range(cg_id: str, days: int) -> dict:
     now = int(time.time())
     frm = now - days * 86400
     async with httpx.AsyncClient(timeout=httpx.Timeout(10, connect=5)) as c:
         r = await c.get(
             f"{BASE}/coins/{cg_id}/market_chart/range",
             params={"vs_currency": "usd", "from": frm, "to": now},
-            headers=_HEADERS,
+            headers=HEADERS,
         )
+    
     if r.status_code != 200:
         raise HTTPException(status_code=r.status_code, detail=r.text)
     return r.json()
 
 
-@router.get("/{cg_id}/charts")
-async def charts_alias(cg_id: str, days: int = Query(7, ge=1, le=365)):
-    return await get_chart(cg_id, days)
-
-
-@router.get("/{cg_id}/chart")
-async def chart(cg_id: str, days: int = Query(7, ge=1, le=365)):
-    return await get_chart(cg_id, days)
-
-
-# Top coins -----
-_MARKETS_CACHE: Dict[Tuple[str, int, int], Tuple[float, list]] = {}
-MARKETS_TTL = 60
-async def _fetch_markets(ids_csv:Optional[str], page: int, per_page: int)-> list:
-    pagrams = {
+# Fetch the market list
+@router.get("")
+async def fetch_markets(ids_csv: Optional[str] = Query(None), 
+                        page: int = Query(1, ge=1), 
+                        per_page: int = Query(20, ge=1, le=250)) -> List[dict]:
+    
+    params = {
         "vs_currency": "usd",
         "order": "market_cap_desc",
         "per_page": per_page,
         "page": page,
         "sparkline": "false",
         "price_change_percentage": "24h",
-    }
+        }
+    
     if ids_csv:
-        pagrams["ids"] = ids_csv
-    async with httpx.AsyncClient(timeout=10) as c:
-        r = await c.get(f"{BASE}/coins/markets",params=pagrams, headers=_HEADERS)
+        params["ids"] = ids_csv
+    
+    async with httpx.AsyncClient(timeout=httpx.Timeout(10, connect=5)) as c:
+        r = await c.get(f"{BASE}/coins/markets", params=params, headers=HEADERS)
     if r.status_code != 200:
         raise HTTPException(status_code=r.status_code, detail=r.text)
     return r.json()
 
 
-@router.get("")
-async def list_markets(
-            ids: Optional[str] = Query(None, description ="Comma-separated CoinGecko ids, e.g. bitcoin,ethereum"),
-            page: int = Query(1,ge=1),
-            per_page: int = Query(20, ge=1, le=250),
-            ):
-    key = (ids or "top", page, per_page)
-    now = time.time()
-    cached = _MARKETS_CACHE.get(key)  
-    if cached:
-        ts, payload = cached            
-        if now - ts < MARKETS_TTL:      
-            return payload
+# Chart endpoint (cached) -> Pls check on this later to trully understand future me
+@router.get("/{cg_id}/chart")
+async def chart(
+    cg_id: str,
+    days: int = Query(7, ge=1, le=365), 
+    # /chart?days=7&flush=1 → clear chart cache 
+    # -> Pls check on this later to trully understand future me
+    flush: bool = False,
+    ):
+    if flush:
+        CHART_CACHE.clear()    
+    key = (cg_id, int(days))
+    cached = CHART_CACHE.get(key, CHART_TTL)
+    if cached is not None:
+        return cached
 
-    data = await _fetch_markets(ids, page, per_page)
-    _MARKETS_CACHE[key] = (key,now)
+    # Fetch fresh -> Pls check on this later to trully understand futufuturetre me
+    data = await fetch_market_chart(cg_id, days)
+    if not data.get("prices"):
+        data = await fetch_market_chart_range(cg_id, days)
+    
+    # Only cache when
+    if data.get("prices"):
+        CHART_CACHE.set(key, data)
     return data
+
+# If FE used charts. Use this below route/alias
+@router.get("/{cg_id}/charts")
+async def charts_alias(
+    cg_id: str,
+    days: int = Query(7, ge=1, le=365),
+    flush: bool = False,
+):
+    return await chart(cg_id, days, flush)
+
+
+# Below this is code block use for cache key inspection
+@router.get("/_cache")
+def cache_status():
+    return {
+        "chart_keys": CHART_CACHE.key(),
+        "markets_keys": MARKETS_CACHE.key(),
+        "chart_ttl_s": CHART_TTL,
+        "markets_ttl_s": MARKETS_TTL,
+    }
+

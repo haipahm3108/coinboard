@@ -6,6 +6,7 @@ type Props = {
   onSelect: (id: string) => void; // called when “View chart” is clicked
 };
 
+
 const fmtPrice = (n: number) =>
   n.toLocaleString(undefined, { style: "currency", currency: "USD" });
 
