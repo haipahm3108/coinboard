@@ -4,6 +4,8 @@ type Props = {
   items: CoinMarket[];          // the array to render
   selectedId?: string;          // current selected coin id (to highlight)
   onSelect: (id: string) => void; // called when “View chart” is clicked
+  onToggleWatch: (id: string) => void;
+  watchSet: Set<string>;
 };
 
 
@@ -13,7 +15,11 @@ const fmtPrice = (n: number) =>
 const fmtPct = (n: number | null) =>
   n == null ? "—" : `${n.toFixed(2)}%`;
 
-export default function MarketsTable({ items, selectedId, onSelect }: Props) {
+export default function MarketsTable({ items, 
+                                      selectedId, 
+                                      onSelect,
+                                      onToggleWatch,
+                                      watchSet,}: Props) {
   if (!items.length) return <p>No coins found.</p>;
 
   return (
@@ -30,8 +36,25 @@ export default function MarketsTable({ items, selectedId, onSelect }: Props) {
         <tbody>
           {items.slice(0, 15).map((c) => {
             const active = c.id === selectedId;
+            const watched = watchSet.has(c.id);
             return (
               <tr key={c.id} style={{ borderTop: "1px solid #eee", background: active ? "#f6faff" : undefined }}>
+                  <td style={{ padding: 8, textAlign: "center" }}>
+                  <button
+                    onClick={() => onToggleWatch(c.id)}
+                    title={watched ? "Remove from watchlist" : "Add to watchlist"}
+                    aria-label={watched ? "Unstar" : "Star"}
+                    style={{
+                      fontSize: 18,
+                      lineHeight: 1,
+                      background: "transparent",
+                      border: "none",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {watched ? "★" : "☆"}
+                  </button>
+                </td>
                 <td style={{ padding: 8 }}>
                   <img
                     src={c.image}
