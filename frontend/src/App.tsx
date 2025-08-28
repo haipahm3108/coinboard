@@ -8,26 +8,47 @@ import { useLocalStorage } from "./hook/useLocalStorage";
 export default function App() {
   const ping = useQuery({ queryKey: ["ping"], queryFn: getPing });
    // Watchlist persisted locally
-  const [watchlist, setWatchlist] = useLocalStorage<string[]>("watchlist:v1", []);
+  const [watchlist, setWatchlist]= useLocalStorage<string[]>("watchlist:v1", []);
   const watchSet = useMemo(() => new Set(watchlist), [watchlist]);
   
+  // Primary persisted locally
+  const [primary, setPrimary]= useLocalStorage<string[]>("primary:v1", []);
+  const primaryFiltered= useMemo(
+  () => primary.filter(id => watchSet.has(id)),
+  [primary, watchSet]
+  );
+  const primarySet = useMemo(() => new Set(primaryFiltered), [primaryFiltered]);
 
   
-  // Let selection be optional (null at start)
+  // UI
   const [cgId, setCgId] = useState<string | null>(null);
   const [days, setDays] = useState(7);
   const [onlyWatch, setOnlyWatch] = useState(false);
 
   const toggleWatch = (id:string) =>
-    setWatchlist((prev) => {
+    setWatchlist( prev => {
       const s = new Set(prev);
-      s.has(id) ? s.delete(id) : s.add(id);
+       if (s.has(id)) {
+        s.delete(id);
+        // drop from primary if unstarred
+        setPrimary(p => p.filter(pid => pid !== id));
+      } else {
+        s.add(id); 
+      }
       const next = Array.from(s);
       if (!next.length && id === cgId) {
         setCgId("bitcoin");     // fall back to bitcoin if the list empty
       }
       return next;
     });  
+  
+  const togglePrimary = (id: string) => {
+    // add/remove from ordered primary list
+    setPrimary(prev => (prev.includes(id) ? prev.filter(x => x !== id) : [id, ...prev.filter(x => x !== id)]));
+    // ensure it's starred when pinned
+    setWatchlist(prev => (prev.includes(id) ? prev : [id, ...prev]));
+  };
+  
 
   const markets = useQuery<CoinMarket[]>({
     queryKey: ["markets"],
@@ -40,12 +61,20 @@ export default function App() {
     return onlyWatch ? all.filter((c) => watchSet.has(c.id)) : all;
   }, [markets.data, onlyWatch, watchSet]); 
 
-  // Derive which coin to chart based on what's visible
+  const clearWatchlist = () => {
+  setWatchlist([]);
+  setPrimary([]);        
+  // optional: if you’re in watchlist mode, clear selection
+  if (onlyWatch) setCgId(null);
+  };
+
+    // Derive which coin to chart based on what's visible <----- CHECK
   const effectiveCgId = useMemo(() => {
   if (!shownItems.length) return null; // nothing visible -> nothing to chart
-  if (cgId && shownItems.some(c => c.id === cgId)) return cgId; // keep explicit selection if still visible
-  return shownItems[0].id; // else default to the first visible coin
-  }, [cgId, shownItems]);
+  const firstPrimaryVisible = primaryFiltered.find(id => shownItems.some(c => c.id === id)) || null; // keep explicit selection if still visible
+  if (cgId && shownItems.some(c => c.id === cgId)) return cgId;
+    return firstPrimaryVisible ?? shownItems[0].id;
+  }, [cgId, shownItems, primaryFiltered]);
 
   const chart = useQuery<MarketChart>({
     queryKey: ["chart", effectiveCgId, days],
@@ -54,6 +83,7 @@ export default function App() {
     staleTime: 60_000,
   });
 
+  
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", padding: 24 }}>
       <h1>Crypto Portfolio (Warm-up)</h1>
@@ -71,7 +101,6 @@ export default function App() {
         </span>}
       </div>
 
-
       {/* Top controls */}
       <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
         <label>
@@ -82,35 +111,12 @@ export default function App() {
           />{" "} Watchlist only ({watchlist.length})
         </label>
 
-        {/* First choosen coin */}
-        <button
-          disabled={!watchlist.length}
-          onClick={() => setCgId(watchlist[0])}
-          title="Load chart for first starred coin"
-        > Chart first ⭐
-        </button>
-        {watchlist.length > 0 && (
-          <button
-          onClick={() => {
-          setWatchlist([]);
-          // Optional: if you're in Watchlist-only mode, clear selection immediately
-          if (onlyWatch) setCgId(null);
-          }}
-          title="Remove all starred coins"
-          style={{ marginLeft: 8 }}
+        {(watchlist.length > 0 || primaryFiltered.length > 0) &&  (
+          <button onClick={clearWatchlist} style={{ marginLeft: 8 }}
           > Clear watchlist
           </button>
         )}
-
-        <label style={{ marginLeft: "auto" }}>
-          Range:&nbsp;
-          <select value={days} onChange={(e) => setDays(Number(e.target.value))}>
-            <option value={1}>1D</option>
-            <option value={7}>7D</option>
-            <option value={30}>30D</option>
-          </select>
-        </label>
-
+        
         {/* quick raw endpoint link for debug */}
         <a
           href={`${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/coins/${cgId}/chart?days=${days}`}
@@ -140,8 +146,11 @@ export default function App() {
           onSelect={setCgId}
           onToggleWatch={toggleWatch}
           watchSet={watchSet}
+          primarySet={primarySet}
+          onTogglePrimary={togglePrimary}
+          showPrimaryControls={onlyWatch}      
         />
-      )}
+        )}
       
 
       {/* Chart controls */}

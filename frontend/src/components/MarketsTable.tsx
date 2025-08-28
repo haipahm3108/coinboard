@@ -2,10 +2,13 @@ import type { CoinMarket } from "../lib/api";
 
 type Props = {
   items: CoinMarket[];                      // the array to render
-selectedId?: string;                        // current selected coin id (to highlight)
+  selectedId?: string;                      
   onSelect: (id: string) => void;           // called when “View chart” is clicked
   onToggleWatch: (id: string) => void;      // "star" toggle 
-  watchSet: Set<string>;                    // starred ids
+  showPrimaryControls?: boolean;              // when true, show the 📌 column
+  onTogglePrimary?: (id: string) => void;     // 📌
+  primarySet: Set<string>;                   
+  watchSet: Set<string>;                    
 };
 
 
@@ -19,6 +22,9 @@ export default function MarketsTable({ items,
                                     selectedId, 
                                     onSelect,
                                     onToggleWatch,
+                                    onTogglePrimary,
+                                    showPrimaryControls = false,
+                                    primarySet,
                                     watchSet, }: Props) {
   if (!items.length) return <p>No coins found.</p>;
 
@@ -27,7 +33,8 @@ export default function MarketsTable({ items,
       <table style={{ borderCollapse: "collapse", width: "100%", minWidth: 560 }}>
         <thead>
           <tr>
-            <th style={{ width: 48 }} /> {/* ⭐ column */}
+            <th style={{ width: 48 }} /> {/* star column */}
+            {showPrimaryControls && <th style={{ width: 48 }} />} {/* 📌 only in watchlist */}
             <th style={{ textAlign: "left", padding: 8 }}>Coin</th>
             <th style={{ textAlign: "right", padding: 8 }}>Price</th>
             <th style={{ textAlign: "right", padding: 8 }}>24h %</th>
@@ -38,6 +45,7 @@ export default function MarketsTable({ items,
           {items.slice(0, 15).map((c) => {
             const active = c.id === selectedId;
             const watched = watchSet.has(c.id);
+            const pinned   = primarySet.has(c.id);
             return (
               <tr key={c.id} style={{ borderTop: "1px solid #eee", background: active ? "#f6faff" : undefined }}>
                 {/* ⭐ toggle */}
@@ -57,6 +65,20 @@ export default function MarketsTable({ items,
                     {watched ? "★" : "☆"}
                   </button>
                 </td>
+                
+                {/* 📌 toggle — only in watchlist view */}
+                {showPrimaryControls && (
+                <td style={{ padding: 8, textAlign: "center" }}>
+                  <button
+                    onClick={() => onTogglePrimary?.(c.id)}
+                    title={pinned ? "Unset primary" : "Set as primary"}
+                    aria-label={pinned ? "Unpin" : "Pin"}
+                    style={{ fontSize: 18, lineHeight: 1, background: "transparent", border: "none", cursor: "pointer" }}
+                  >
+                    {pinned ? "📌" : "📍"}
+                  </button>
+                </td>
+                )}
 
                 <td style={{ padding: 8 }}>
                   <img
@@ -67,7 +89,13 @@ export default function MarketsTable({ items,
                     style={{ verticalAlign: "middle", marginRight: 8 }}
                   />
                   {c.name} ({c.symbol.toUpperCase()})
+                  {showPrimaryControls && pinned && (
+                    <span style={{ marginLeft: 8, fontSize: 12, padding: "2px 6px", borderRadius: 12, background: "#eef6ff", color: "#1e40af" }}>
+                      Primary
+                    </span>
+                  )}
                 </td>
+                
                 <td style={{ padding: 8, textAlign: "right" }}>{fmtPrice(c.current_price)}</td>
                 <td
                   style={{
