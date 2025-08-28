@@ -1,11 +1,11 @@
 import type { CoinMarket } from "../lib/api";
 
 type Props = {
-  items: CoinMarket[];          // the array to render
-  selectedId?: string;          // current selected coin id (to highlight)
-  onSelect: (id: string) => void; // called when “View chart” is clicked
-  onToggleWatch: (id: string) => void;
-  watchSet: Set<string>;
+  items: CoinMarket[];                      // the array to render
+selectedId?: string;                        // current selected coin id (to highlight)
+  onSelect: (id: string) => void;           // called when “View chart” is clicked
+  onToggleWatch: (id: string) => void;      // "star" toggle 
+  watchSet: Set<string>;                    // starred ids
 };
 
 
@@ -16,10 +16,10 @@ const fmtPct = (n: number | null) =>
   n == null ? "—" : `${n.toFixed(2)}%`;
 
 export default function MarketsTable({ items, 
-                                      selectedId, 
-                                      onSelect,
-                                      onToggleWatch,
-                                      watchSet,}: Props) {
+                                    selectedId, 
+                                    onSelect,
+                                    onToggleWatch,
+                                    watchSet, }: Props) {
   if (!items.length) return <p>No coins found.</p>;
 
   return (
@@ -27,6 +27,7 @@ export default function MarketsTable({ items,
       <table style={{ borderCollapse: "collapse", width: "100%", minWidth: 560 }}>
         <thead>
           <tr>
+            <th style={{ width: 48 }} /> {/* ⭐ column */}
             <th style={{ textAlign: "left", padding: 8 }}>Coin</th>
             <th style={{ textAlign: "right", padding: 8 }}>Price</th>
             <th style={{ textAlign: "right", padding: 8 }}>24h %</th>
@@ -39,7 +40,8 @@ export default function MarketsTable({ items,
             const watched = watchSet.has(c.id);
             return (
               <tr key={c.id} style={{ borderTop: "1px solid #eee", background: active ? "#f6faff" : undefined }}>
-                  <td style={{ padding: 8, textAlign: "center" }}>
+                {/* ⭐ toggle */}
+                <td style={{ padding: 8, textAlign: "center" }}>
                   <button
                     onClick={() => onToggleWatch(c.id)}
                     title={watched ? "Remove from watchlist" : "Add to watchlist"}
@@ -55,6 +57,7 @@ export default function MarketsTable({ items,
                     {watched ? "★" : "☆"}
                   </button>
                 </td>
+
                 <td style={{ padding: 8 }}>
                   <img
                     src={c.image}
