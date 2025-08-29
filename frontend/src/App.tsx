@@ -4,6 +4,8 @@ import { getPing, getMarkets, getChart, type CoinMarket, type MarketChart } from
 import MarketsTable from "./components/MarketsTable";
 import PriceChart from "./components/PriceCharts";
 import { useLocalStorage } from "./hook/useLocalStorage";
+import Newslist from "./components/NewsList";
+import { getNews, type NewsItem } from "./lib/api";
 
 export default function App() {
   const ping = useQuery({ queryKey: ["ping"], queryFn: getPing });
@@ -82,8 +84,25 @@ export default function App() {
     enabled: !!effectiveCgId,
     staleTime: 60_000,
   });
-
   
+  //news state
+  const [newsCount, setNewsCount] = useState(8);
+
+  const news = useQuery<NewsItem[]> (
+    {
+      queryKey: ["news", onlyWatch ? watchlist.join(",") : "all"],
+      queryFn: () => getNews(onlyWatch ? watchlist : undefined),
+      staleTime: 15*60_000,
+       enabled: !onlyWatch,
+    }
+  );
+  const allNews = news.data ?? [];
+  const visibleNews = useMemo(
+    () => allNews.slice(0, Math.max(0, Math.min(newsCount, allNews.length))),
+    [allNews, newsCount]
+  );
+  const hasMoreNews = allNews.length > visibleNews.length;
+
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", padding: 24 }}>
       <h1>Crypto Portfolio (Warm-up)</h1>
@@ -192,10 +211,36 @@ export default function App() {
         )}
         {effectiveCgId && (chart.data?.prices?.length ?? 0) > 0 && (
           <PriceChart prices={chart.data!.prices} days={days} />
-        )}
-        
-         
+        )}   
       </div>
+      
+      {/**News section */}
+      {!onlyWatch && (
+      <>
+      <h2 style={{ marginTop: 24 }}>News</h2>
+
+      {news.isLoading && <p>Loading news…</p>}
+      {news.error && <p style={{ color: "crimson" }}>{(news.error as Error).message}</p>}
+      {visibleNews.length > 0 && <Newslist items={visibleNews} layout="pattern" featureEvery={6} />}
+
+      {/* Actions */}
+      {visibleNews.length > 0 && (
+        <div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 12 }}>
+          {hasMoreNews && (
+            <button onClick={() => setNewsCount(c => c + 8)}>
+              Load more
+            </button>
+          )}
+          {newsCount > 8 && (
+            <button onClick={() => setNewsCount(8)}>
+              Show less
+            </button>
+          )}
+        </div>
+      )}
+    </>
+  )}
+          
     </div>
   );
 }

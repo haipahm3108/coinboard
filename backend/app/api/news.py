@@ -41,7 +41,7 @@ TTL = 15 * 60
 MAX_FEED_BYTES = 1_000_000      # 1MB cap per feed
 
 FEEDS = {
-    "CoinDesk":      "https://www.coindesk.com/arc/outboundfeeds/rss/",
+    #"CoinDesk":      "https://www.coindesk.com/arc/outboundfeeds/rss/",
     "CoinTelegraph": "https://cointelegraph.com/rss",
     "Decrypt":       "https://decrypt.co/feed",
 }

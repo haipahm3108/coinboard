@@ -40,3 +40,11 @@ export async function getChart(cgId: string, days: number): Promise<MarketChart>
   console.log("getChart ->", { url, cgId, days });
   return fetch(url).then(jsonOrThrow);
 }
+
+export type NewsItem = { title: string; link: string; published: number; source: string; summary?: string; };
+
+export async function getNews(coins?: string[]): Promise<NewsItem[]> {
+  const q = coins?.length ? `?coins=${encodeURIComponent(coins.join(","))}` : "";
+  const url = `${BASE}/api/news${q}`;
+  return fetch(url).then(jsonOrThrow);
+}

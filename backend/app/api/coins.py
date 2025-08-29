@@ -87,7 +87,7 @@ async def fetch_market_chart_range(cg_id: str, days: int) -> dict:
 @router.get("")
 async def fetch_markets(ids_csv: Optional[str] = Query(None), 
                         page: int = Query(1, ge=1), 
-                        per_page: int = Query(20, ge=1, le=250)) -> list[dict]:
+                        per_page: int = Query(15, ge=1, le=250)) -> list[dict]:
     
     params = {
         "vs_currency": "usd",
