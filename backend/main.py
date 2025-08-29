@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import coins
+from app.api import coins,news
 import os,time
+
 
 app = FastAPI(title = "Crypto Portfolio(Warm-up)")
 
@@ -35,4 +36,4 @@ async def print_routes():
         print(f"[ROUTE] {methods} {path}")
 
 app.include_router(coins.router, prefix="/api/coins", tags=["coins"])
-
+app.include_router(news.router, prefix="/api/news", tags=["news"])

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Query
 import httpx, os, time
 from dataclasses import dataclass
-from typing import Dict, Tuple, Optional,Any,List
+from typing import  Optional,Any
 
 router = APIRouter()
 
@@ -19,7 +19,7 @@ class Entry:
 
 class TTLCache:
     def __init__(self)->None:
-        self._store: Dict[tuple, Entry] = {}
+        self._store: dict[tuple, Entry] = {}
 
     
     def get(self, key: tuple, ttl_seconds: int) -> Optional[Any]:
@@ -41,7 +41,7 @@ class TTLCache:
         self._store.clear()
     
 
-    def key(self) -> List[tuple]:
+    def key(self) -> list[tuple]:
         return list(self._store.key())
     
 
@@ -87,7 +87,7 @@ async def fetch_market_chart_range(cg_id: str, days: int) -> dict:
 @router.get("")
 async def fetch_markets(ids_csv: Optional[str] = Query(None), 
                         page: int = Query(1, ge=1), 
-                        per_page: int = Query(20, ge=1, le=250)) -> List[dict]:
+                        per_page: int = Query(20, ge=1, le=250)) -> list[dict]:
     
     params = {
         "vs_currency": "usd",
