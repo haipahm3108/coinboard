@@ -6,6 +6,10 @@ import PriceChart from "./components/PriceCharts";
 import { useLocalStorage } from "./hook/useLocalStorage";
 import Newslist from "./components/NewsList";
 import { getNews, type NewsItem } from "./lib/api";
+import Navbar from "./components/Navbar";
+
+
+
 
 export default function App() {
   const ping = useQuery({ queryKey: ["ping"], queryFn: getPing });
@@ -104,7 +108,17 @@ export default function App() {
   const hasMoreNews = allNews.length > visibleNews.length;
 
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", padding: 24 }}>
+    
+  <>
+    {/* Top controls */}
+    <Navbar style={{ fontFamily: "system-ui, serif", padding: 24 }}
+      current={onlyWatch ? "watchlist" : "home"}
+      onNav={(tab) => setOnlyWatch(tab === "watchlist")}
+      onLogin={() => alert("Auth0 coming soon")}
+    />
+    <div style={{ fontFamily: "system-ui, serif", padding: 24 }}>
+
+     
       <h1>Crypto Portfolio (Warm-up)</h1>
 
       {/* Ping (optional) */}
@@ -120,7 +134,8 @@ export default function App() {
         </span>}
       </div>
 
-      {/* Top controls */}
+      
+      {/* 
       <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
         <label>
           <input
@@ -130,13 +145,9 @@ export default function App() {
           />{" "} Watchlist only ({watchlist.length})
         </label>
 
-        {(watchlist.length > 0 || primaryFiltered.length > 0) &&  (
-          <button onClick={clearWatchlist} style={{ marginLeft: 8 }}
-          > Clear watchlist
-          </button>
-        )}
+      
         
-        {/* quick raw endpoint link for debug */}
+        {/* quick raw endpoint link for debug 
         <a
           href={`${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/coins/${cgId}/chart?days=${days}`}
           target="_blank"
@@ -145,19 +156,26 @@ export default function App() {
         > open raw endpoint
         </a>
       </div>
-
+      */}
       {/* Markets */}
       <h2 style={{ marginTop: 16 }}>Markets {onlyWatch && "— Watchlist"}</h2>
       {markets.isLoading && <p>Loading markets…</p>}
       {markets.error && <p style={{ color: "crimson" }}>
         {(markets.error as Error).message}</p>}
       {!markets.isLoading && !markets.error && shownItems.length === 0 && (
+        
         <p style={{ opacity: 0.7 }}>
           {onlyWatch
             ?"Your watchlist is empty. Star some coins with the ★ button."
               :"No markets to show."}
         </p> 
         )}
+        {/* clear coins selection */}
+        {onlyWatch && (watchlist.length > 0 || primaryFiltered.length > 0) &&  (
+          <button onClick={clearWatchlist} style={{ marginLeft: 8 }}
+          > Clear watchlist
+          </button>
+       )}
         {shownItems.length > 0 && (
         <MarketsTable
           items={shownItems}
@@ -242,5 +260,6 @@ export default function App() {
   )}
           
     </div>
+</>    
   );
 }

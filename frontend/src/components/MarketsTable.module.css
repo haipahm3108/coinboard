@@ -1,0 +1,104 @@
+:root{
+  /* quick theme knobs */
+  --panel-bg: rgba(255,255,255,0.04);
+  --panel-border: rgba(255,255,255,0.20);
+
+  --row-odd:   rgba(255,255,255,0.03);
+  --row-even:  rgba(255,255,255,0.02);
+  --row-hover: rgba(255,255,255,0.06);
+  --row-active: rgba(37,99,235,0.14);
+  --row-divider: rgba(255,255,255,0.10);
+
+  --text:  #e5e7eb;
+  --muted: #cbd5e1;
+  --up:    #22c55e;
+  --down:  #ef4444;
+}
+
+/* glass panel */
+.panel{
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  backdrop-filter: blur(10px) saturate(120%);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  overflow: hidden;
+}
+.wrap{ overflow-x: auto; }
+
+.table{
+  width: 100%;
+  min-width: 900px;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* header */
+.th{
+  position: sticky; top: 0; z-index: 1;
+  padding: 12px 14px;
+  text-align: left;
+  background: rgba(11,18,32,0.72);
+  color: var(--muted);
+  backdrop-filter: blur(6px);
+  font-weight: 800;
+  border-bottom: 1px solid var(--row-divider);
+}
+
+.starCol{ width: 44px; text-align: center; }
+.pinCol{  width: 44px; text-align: center; }
+.actionCol{ width: 140px; text-align: center; }
+
+.td{ padding: 12px 14px; }
+.num{ text-align: right; white-space: nowrap; }
+
+/* rows */
+.row{ background: var(--row-odd); border-top: 1px solid var(--row-divider); }
+.row:nth-child(even){ background: var(--row-even); }
+.row:hover{ background: var(--row-hover); transition: background .12s ease; }
+
+/* selected row */
+.active{ background: var(--row-active); }
+
+/* coin cell */
+.coin{ display: flex; align-items: center; gap: 10px; }
+.icon{ width: 18px; height: 18px; border-radius: 50%; }
+.name{ font-weight: 650; }
+.sym{ opacity: .75; font-weight: 600; }
+.badge{
+  margin-left: 8px; font-size: 12px;
+  padding: 2px 6px; border-radius: 12px;
+  background: rgba(59,130,246,.15); color: #c7d2fe;
+  border: 1px solid rgba(99,102,241,.25);
+}
+
+/* % colors */
+.up{ color: var(--up); }
+.down{ color: var(--down); }
+
+/* scoped buttons */
+.starBtn, .pinBtn{
+  font-size: 18px; line-height: 1;
+  background: transparent; border: 0; cursor: pointer; color: var(--text);
+}
+.starBtn:hover, .pinBtn:hover{ opacity: .9; }
+.pinned{ filter: saturate(1.2); }
+
+.pill, .pillGhost{
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.16);
+  font-weight: 700; cursor: pointer;
+}
+.pill{
+  background: rgba(37,99,235,0.95); color: #fff;
+}
+.pill:hover{ background: rgba(37,99,235,1); }
+.pillGhost{
+  background: rgba(255,255,255,0.08); color: var(--text);
+}
+.pillGhost:hover{ background: rgba(255,255,255,0.12); }
+
+.empty{ opacity: .7; }

@@ -1,6 +1,6 @@
 import type { NewsItem } from "../lib/api";
 import "./NewsList.css";
-
+/* 
 function timeAgo(unixSec: number) {
   const diffMs = Date.now() - unixSec * 1000;
   const m = Math.floor(diffMs / 60000);
@@ -11,7 +11,7 @@ function timeAgo(unixSec: number) {
   const d = Math.floor(h / 24);
   return `${d}d ago`;
 }
-
+*/
 type Props = {
   items: NewsItem[];
   layout?: "grid" | "featured" | "pattern";
