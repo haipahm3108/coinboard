@@ -2,7 +2,7 @@
 :root{
   /* text + panel surface */
   --fg: #e2e8f0;
-  --panel-bg: rgba(255,255,255,0.04);
+  --panel-bg: rgba(255, 255, 255, 0.04);
   --panel-border: rgba(255,255,255,0.08);
 
   /* background layers */
@@ -31,3 +31,8 @@ body {
 /* Optional: links slightly brighter */
 a { color: #93c5fd; }
 a:hover { color: #bfdbfe; }
+
+button { background: #1043c6; 
+    color: #e2e8f0; 
+    border-color: rgba(255,255,255,0.12); }
+  button:hover { background: #ffffff; color: #000; }

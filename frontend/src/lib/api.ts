@@ -48,3 +48,26 @@ export async function getNews(coins?: string[]): Promise<NewsItem[]> {
   const url = `${BASE}/api/news${q}`;
   return fetch(url).then(jsonOrThrow);
 }
+
+// sever-side watchlist 
+export async function getServerWatchlist(token: string): Promise<string[]> {
+  const r = await fetch(`${BASE}/api/me/watchlist`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return jsonOrThrow(r);
+}
+export async function addServerWatch(cgId: string, token: string) {
+  const r = await fetch(`${BASE}/api/me/watchlist`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ cg_id: cgId }),
+  });
+  return jsonOrThrow(r);
+}
+export async function delServerWatch(cgId: string, token: string) {
+  const r = await fetch(`${BASE}/api/me/watchlist/${cgId}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return jsonOrThrow(r);
+}

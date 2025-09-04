@@ -83,7 +83,7 @@
   font-size: 18px; line-height: 1;
   background: transparent; border: 0; cursor: pointer; color: var(--text);
 }
-.starBtn:hover, .pinBtn:hover{ opacity: .9; }
+.starBtn:hover, .pinBtn:hover{ opacity: .9; color:#000000 }
 .pinned{ filter: saturate(1.2); }
 
 .pill, .pillGhost{
@@ -95,7 +95,9 @@
 .pill{
   background: rgba(37,99,235,0.95); color: #fff;
 }
-.pill:hover{ background: rgba(37,99,235,1); }
+.pill:hover{ 
+  background: rgb(236, 240, 248);
+  color: #000000 }
 .pillGhost{
   background: rgba(255,255,255,0.08); color: var(--text);
 }

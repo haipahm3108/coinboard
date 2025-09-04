@@ -1,18 +1,29 @@
-import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getPing, getMarkets, getChart, type CoinMarket, type MarketChart } from "./lib/api";
+import { useEffect,useMemo, useState } from "react";
+import { useQuery,useQueryClient, useMutation } from "@tanstack/react-query";
+import {  getNews,
+  type NewsItem,
+  type CoinMarket, 
+  type MarketChart,
+  getPing, getMarkets, getChart,
+  getServerWatchlist, addServerWatch, delServerWatch } from "./lib/api";
 import MarketsTable from "./components/MarketsTable";
 import PriceChart from "./components/PriceCharts";
 import { useLocalStorage } from "./hook/useLocalStorage";
 import Newslist from "./components/NewsList";
-import { getNews, type NewsItem } from "./lib/api";
+//import { getNews, type NewsItem } from "./lib/api";
 import Navbar from "./components/Navbar";
+import { useAuth0 } from "@auth0/auth0-react";
 
 
 
 
 export default function App() {
-  const ping = useQuery({ queryKey: ["ping"], queryFn: getPing });
+  const qc = useQueryClient();
+  
+  // auth
+  const { isAuthenticated, user, loginWithRedirect, logout, getAccessTokenSilently } = useAuth0();
+  
+
    // Watchlist persisted locally
   const [watchlist, setWatchlist]= useLocalStorage<string[]>("watchlist:v1", []);
   const watchSet = useMemo(() => new Set(watchlist), [watchlist]);
@@ -26,27 +37,34 @@ export default function App() {
   const primarySet = useMemo(() => new Set(primaryFiltered), [primaryFiltered]);
 
   
-  // UI
+  // view state ui
+  const [onlyWatch, setOnlyWatch] = useState(false);    // Watchlist tab
+  const [cgId, setCgId] = useState("bitcoin");
+  const [days, setDays] = useState(7);
+  
+  /*
   const [cgId, setCgId] = useState<string | null>(null);
   const [days, setDays] = useState(7);
   const [onlyWatch, setOnlyWatch] = useState(false);
+  */
+  // Bbounce out of watchlist if logged out
+  useEffect(() => { if (!isAuthenticated && onlyWatch) setOnlyWatch(false); }, [isAuthenticated, onlyWatch]);
 
-  const toggleWatch = (id:string) =>
-    setWatchlist( prev => {
-      const s = new Set(prev);
-       if (s.has(id)) {
-        s.delete(id);
-        // drop from primary if unstarred
-        setPrimary(p => p.filter(pid => pid !== id));
-      } else {
-        s.add(id); 
+  const ping = useQuery({ queryKey: ["ping"], queryFn: getPing });
+  
+  // toggle ⭐ (require login)
+  const toggleWatch = useMutation({
+    mutationFn: async (id: string) => {
+      if (!isAuthenticated) {
+        await loginWithRedirect();
+        return;
       }
-      const next = Array.from(s);
-      if (!next.length && id === cgId) {
-        setCgId("bitcoin");     // fall back to bitcoin if the list empty
-      }
-      return next;
-    });  
+      const token = await getAccessTokenSilently();
+      if (watchSet.has(id)) await delServerWatch(id, token);
+      else await addServerWatch(id, token);
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["watchlist"] }),
+  });
   
   const togglePrimary = (id: string) => {
     // add/remove from ordered primary list
@@ -55,7 +73,6 @@ export default function App() {
     setWatchlist(prev => (prev.includes(id) ? prev : [id, ...prev]));
   };
   
-
   const markets = useQuery<CoinMarket[]>({
     queryKey: ["markets"],
     queryFn: () => getMarkets(),
@@ -106,15 +123,38 @@ export default function App() {
     [allNews, newsCount]
   );
   const hasMoreNews = allNews.length > visibleNews.length;
+  
+  // Server watchlist (only when logged in)
+  const watchist = useQuery<string[]>({
+    queryKey: ["watchlist", isAuthenticated],
+    enabled: isAuthenticated,
+    queryFn: async () => {
+      const token = await getAccessTokenSilently();
+      return getServerWatchlist(token);
+    },
+    initialData: [],
+  });
+
+  // Navbar handlers
+  const handleNav = async (tab: "home" | "watchlist") => {
+    if (tab === "home") { setOnlyWatch(false); return; }
+    if (!isAuthenticated) { await loginWithRedirect(); return; }
+    setOnlyWatch(true);
+  };
+  const handleLogin = () =>
+    isAuthenticated
+      ? logout({ logoutParams: { returnTo: window.location.origin } })
+      : loginWithRedirect();
 
   return (
     
   <>
     {/* Top controls */}
     <Navbar style={{ fontFamily: "system-ui, serif", padding: 24 }}
-      current={onlyWatch ? "watchlist" : "home"}
-      onNav={(tab) => setOnlyWatch(tab === "watchlist")}
-      onLogin={() => alert("Auth0 coming soon")}
+        current={onlyWatch ? "watchlist" : "home"}
+        onNav={handleNav}
+        onLogin={handleLogin}
+        userEmail={user?.email ?? null}
     />
     <div style={{ fontFamily: "system-ui, serif", padding: 24 }}>
 
@@ -172,20 +212,20 @@ export default function App() {
         )}
         {/* clear coins selection */}
         {onlyWatch && (watchlist.length > 0 || primaryFiltered.length > 0) &&  (
-          <button onClick={clearWatchlist} style={{ marginLeft: 8 }}
+          <button onClick={clearWatchlist} style={{ marginBottom: 24 }}
           > Clear watchlist
           </button>
        )}
         {shownItems.length > 0 && (
         <MarketsTable
           items={shownItems}
-          selectedId={effectiveCgId ?? undefined}
+          selectedId={cgId}
           onSelect={setCgId}
-          onToggleWatch={toggleWatch}
-          watchSet={watchSet}
-          primarySet={primarySet}
-          onTogglePrimary={togglePrimary}
-          showPrimaryControls={onlyWatch}      
+          onToggleWatch={(id) => toggleWatch.mutate(id)}
+          showPrimaryControls={false}            // keep off for now
+          onTogglePrimary={undefined}
+          primarySet={new Set<string>()}
+          watchSet={watchSet} 
         />
         )}
       

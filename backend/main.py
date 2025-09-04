@@ -1,9 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import coins,news
+from app.api import coins,news,watchlist
 import os,time
+from app.db import init_pool, close_pool
+from dotenv import load_dotenv
 
-
+load_dotenv()
 app = FastAPI(title = "Crypto Portfolio(Warm-up)")
 
 app.add_middleware(
@@ -29,11 +31,12 @@ def health():
     }
 
 @app.on_event("startup")
-async def print_routes():
-    for r in app.router.routes:
-        methods = getattr(r, "methods", [])
-        path = getattr(r, "path", "")
-        print(f"[ROUTE] {methods} {path}")
+async def _on_start(): await init_pool(app)
+
+@app.on_event("shutdown")
+async def _on_stop(): await close_pool(app)
+
 
 app.include_router(coins.router, prefix="/api/coins", tags=["coins"])
 app.include_router(news.router, prefix="/api/news", tags=["news"])
+app.include_router(watchlist.router, prefix="/api/me/watchlist", tags=["me"])
