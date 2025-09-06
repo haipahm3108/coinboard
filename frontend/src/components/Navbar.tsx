@@ -4,6 +4,7 @@ type Props = {
   current: "home" | "watchlist";
   onNav: (tab: "home" | "watchlist") => void;
   onLogin?: () => void;
+  onLogout?: () => void;  
   userEmail?: string | null;
 
   // NEW: allow passing style/className from parent
@@ -14,10 +15,12 @@ type Props = {
 export default function Navbar({
   current,
   onNav,
-  onLogin,
+  onLogin = () => {},                    // <-- safe defaults
+  onLogout = () => {}, 
   userEmail,
   style,
   className,
+  
 }: Props) {
   return (
     <header className={`${styles.wrap} ${className ?? ""}`} style={style}>
@@ -45,17 +48,23 @@ export default function Navbar({
           </nav>
         </div>
 
-        {/* Right side: login or email */}
+{/* Right side: login / email + logout */}
         <div className={styles.right}>
           {userEmail ? (
-            <div className={styles.user}>{userEmail}</div>
+            <>
+              <div className={styles.user} title={userEmail}>{userEmail}</div>
+              {/* reuse existing button style; no CSS changes needed */}
+              <button className={styles.loginBtn} onClick={onLogout} aria-label="Log out">
+                Log out
+              </button>
+            </>
           ) : (
-            <button className={styles.loginBtn} onClick={onLogin}>
+            <button className={styles.loginBtn} onClick={onLogin} aria-label="Log in">
               Login
             </button>
           )}
         </div>
-      </div>
+      </div>  
     </header>
   );
 }

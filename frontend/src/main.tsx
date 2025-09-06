@@ -27,7 +27,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     domain={domain}
     clientId={clientId}
     cacheLocation="localstorage"
-    authorizationParams={{ redirect_uri: window.location.origin, audience }}
+    authorizationParams={{ redirect_uri: window.location.origin, 
+                          audience: import.meta.env.VITE_AUTH0_AUDIENCE!,
+                          scope: "openid profile email", }}
   >
     <QueryClientProvider client={qc}>
       <App />

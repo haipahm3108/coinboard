@@ -50,24 +50,34 @@ export async function getNews(coins?: string[]): Promise<NewsItem[]> {
 }
 
 // sever-side watchlist 
-export async function getServerWatchlist(token: string): Promise<string[]> {
+export async function getServerWatchlist(accessToken: string): Promise<string[]> {
   const r = await fetch(`${BASE}/api/me/watchlist`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+     Authorization: `Bearer ${accessToken}`,
+    },
   });
   return jsonOrThrow(r);
 }
-export async function addServerWatch(cgId: string, token: string) {
+export async function addServerWatch(cgId: string, accessToken: string) {
   const r = await fetch(`${BASE}/api/me/watchlist`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
     body: JSON.stringify({ cg_id: cgId }),
   });
   return jsonOrThrow(r);
 }
-export async function delServerWatch(cgId: string, token: string) {
-  const r = await fetch(`${BASE}/api/me/watchlist/${cgId}`, {
+export async function delServerWatch(cgId: string, accessToken: string) {
+ let r = await fetch(`${BASE}/api/me/watchlist/${encodeURIComponent(cgId)}`, {
     method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${accessToken}` },
   });
+
+  // if your backend actually expects a query param, fall back
+  if (r.status === 404) {
+    r = await fetch(`${BASE}/api/me/watchlist?cg_id=${encodeURIComponent(cgId)}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+  }
   return jsonOrThrow(r);
 }

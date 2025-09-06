@@ -17,6 +17,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 
 
+
+
 export default function App() {
   const qc = useQueryClient();
   
@@ -34,7 +36,7 @@ export default function App() {
   () => primary.filter(id => watchSet.has(id)),
   [primary, watchSet]
   );
-  const primarySet = useMemo(() => new Set(primaryFiltered), [primaryFiltered]);
+  //const primarySet = useMemo(() => new Set(primaryFiltered), [primaryFiltered]);
 
   
   // view state ui
@@ -48,31 +50,20 @@ export default function App() {
   const [onlyWatch, setOnlyWatch] = useState(false);
   */
   // Bbounce out of watchlist if logged out
+  // if logged out while on watchlist tab, go home
   useEffect(() => { if (!isAuthenticated && onlyWatch) setOnlyWatch(false); }, [isAuthenticated, onlyWatch]);
-
   const ping = useQuery({ queryKey: ["ping"], queryFn: getPing });
   
-  // toggle ⭐ (require login)
-  const toggleWatch = useMutation({
-    mutationFn: async (id: string) => {
-      if (!isAuthenticated) {
-        await loginWithRedirect();
-        return;
-      }
-      const token = await getAccessTokenSilently();
-      if (watchSet.has(id)) await delServerWatch(id, token);
-      else await addServerWatch(id, token);
-    },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["watchlist"] }),
-  });
   
-  const togglePrimary = (id: string) => {
-    // add/remove from ordered primary list
-    setPrimary(prev => (prev.includes(id) ? prev.filter(x => x !== id) : [id, ...prev.filter(x => x !== id)]));
-    // ensure it's starred when pinned
-    setWatchlist(prev => (prev.includes(id) ? prev : [id, ...prev]));
-  };
+
+  //const togglePrimary = (id: string) => {
+  //// add/remove from ordered primary list
+  //  setPrimary(prev => (prev.includes(id) ? prev.filter(x => x !== id) : [id, ...prev.filter(x => x !== id)]));
+  //// ensure it's starred when pinned
+  //  setWatchlist(prev => (prev.includes(id) ? prev : [id, ...prev]));
+  // };
   
+
   const markets = useQuery<CoinMarket[]>({
     queryKey: ["markets"],
     queryFn: () => getMarkets(),
@@ -84,12 +75,18 @@ export default function App() {
     return onlyWatch ? all.filter((c) => watchSet.has(c.id)) : all;
   }, [markets.data, onlyWatch, watchSet]); 
 
-  const clearWatchlist = () => {
+const clearWatchlist = async () => {
+  if (isAuthenticated && watchlist.length) {
+    const token = await getAccessTokenSilently({
+      authorizationParams: { audience: import.meta.env.VITE_AUTH0_AUDIENCE },
+    });
+    await Promise.all(watchlist.map(id => delServerWatch(id, token)));
+    qc.invalidateQueries({ queryKey: ["serverWatchlist"] });
+  }
   setWatchlist([]);
-  setPrimary([]);        
-  // optional: if you’re in watchlist mode, clear selection
-  if (onlyWatch) setCgId(null);
-  };
+  setPrimary([]);
+  if (onlyWatch) setCgId("bitcoin");
+};
 
     // Derive which coin to chart based on what's visible <----- CHECK
   const effectiveCgId = useMemo(() => {
@@ -125,26 +122,67 @@ export default function App() {
   const hasMoreNews = allNews.length > visibleNews.length;
   
   // Server watchlist (only when logged in)
-  const watchist = useQuery<string[]>({
-    queryKey: ["watchlist", isAuthenticated],
+  const serverWatchlist = useQuery<string[]>({
+    queryKey: ["serverWatchlist"],
     enabled: isAuthenticated,
     queryFn: async () => {
-      const token = await getAccessTokenSilently();
+      const token = await getAccessTokenSilently({
+        authorizationParams: { audience: import.meta.env.VITE_AUTH0_AUDIENCE },
+      });
       return getServerWatchlist(token);
     },
     initialData: [],
   });
-
+  // toggle ⭐ (require login)
+  const toggleWatch = useMutation({
+    mutationFn: async (id: string) => {
+      if (!isAuthenticated) {
+        await loginWithRedirect();
+        return;
+      }
+      const token = await getAccessTokenSilently();
+      if (watchSet.has(id)) await delServerWatch(id, token);
+      else await addServerWatch(id, token);
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["serverWatchlist"] }),
+  });
   // Navbar handlers
   const handleNav = async (tab: "home" | "watchlist") => {
     if (tab === "home") { setOnlyWatch(false); return; }
     if (!isAuthenticated) { await loginWithRedirect(); return; }
     setOnlyWatch(true);
   };
-  const handleLogin = () =>
-    isAuthenticated
-      ? logout({ logoutParams: { returnTo: window.location.origin } })
-      : loginWithRedirect();
+
+
+// 🔄 sync server → local after login (prevents “stars” mismatch)
+  useEffect(() => {
+    if (isAuthenticated && serverWatchlist.data) {
+      // only update if different to avoid needless re-renders
+      const server = serverWatchlist.data;
+      if (server.length !== watchlist.length || server.some((id, i) => id !== watchlist[i])) {
+        setWatchlist(server);
+      }
+    }
+  }, [isAuthenticated, serverWatchlist.data, watchlist, setWatchlist]);
+  const handleLogin = () => loginWithRedirect();
+  const handleLogout = async () => {
+  // 1) clear client state
+  setWatchlist([]);
+  setPrimary([]);
+  setOnlyWatch(false);
+  setCgId("bitcoin");
+
+  // 2) clear react-query cache for server list
+  qc.removeQueries({ queryKey: ["serverWatchlist"] });
+
+  // 3) clear localStorage keys used by your hooks (belt & suspenders)
+  localStorage.removeItem("watchlist:v1");
+  localStorage.removeItem("primary:v1");
+
+  // 4) redirect to Auth0 logout
+  await logout({ logoutParams: { returnTo: window.location.origin } });
+};
+
 
   return (
     
@@ -154,6 +192,7 @@ export default function App() {
         current={onlyWatch ? "watchlist" : "home"}
         onNav={handleNav}
         onLogin={handleLogin}
+        onLogout={handleLogout}  
         userEmail={user?.email ?? null}
     />
     <div style={{ fontFamily: "system-ui, serif", padding: 24 }}>
@@ -166,7 +205,7 @@ export default function App() {
         <button onClick={() => ping.refetch()} disabled={ping.isFetching}>
           {ping.isFetching ? "Checking..." : "Check /api/ping"}
         </button>
-        {ping.error && <span style={{ color: "crimson", marginLeft: 8 }}>
+        {ping.error && <span style={{ color: "csrimson", marginLeft: 8 }}>
           {(ping.error as Error).message}
         </span>}
         {ping.data && <span style={{ marginLeft: 8, opacity: .7 }}>
@@ -219,6 +258,8 @@ export default function App() {
         {shownItems.length > 0 && (
         <MarketsTable
           items={shownItems}
+          //onLogin={handleLogin}
+          //onLogout={handleLogout}
           selectedId={cgId}
           onSelect={setCgId}
           onToggleWatch={(id) => toggleWatch.mutate(id)}
