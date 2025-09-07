@@ -1,0 +1,46 @@
+# --- OS / Editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.code-workspace
+
+# --- Logs ---
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# --- Frontend (Vite/React) ---
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.eslintcache
+frontend/coverage/
+frontend/.env
+frontend/.env.*
+
+
+# --- Backend (FastAPI/Python) ---
+backend/.venv/
+backend/venv/
+backend/__pycache__/
+backend/.pytest_cache/
+backend/.mypy_cache/
+backend/.ruff_cache/
+backend/.coverage
+backend/coverage.xml
+backend/.python-version
+backend/.env
+backend/.env.*
+
+
+# --- Caches / temp ---
+**/.cache/
+tmp/
+temp/
+
+# --- Docker local overrides ---
+docker-compose.override.yml
+EOF

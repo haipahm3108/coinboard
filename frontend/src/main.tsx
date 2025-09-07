@@ -1,4 +1,4 @@
-import React from 'react';
+//import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import App from './App.tsx';
@@ -10,7 +10,7 @@ const qc = new QueryClient();
 
 const domain   = import.meta.env.VITE_AUTH0_DOMAIN!;
 const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID!;
-const audience = import.meta.env.VITE_AUTH0_AUDIENCE!;
+//const audience = import.meta.env.VITE_AUTH0_AUDIENCE!;
 /* 
 const qc = new QueryClient({
   defaultOptions: {
