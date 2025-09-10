@@ -5,6 +5,7 @@ from app.services.auth0 import get_current_sub
 
 router = APIRouter()
 
+
 class WatchBody(BaseModel):
     cg_id: str
 

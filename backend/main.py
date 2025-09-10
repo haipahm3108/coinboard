@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import coins,news,watchlist
-import os,time
+#import os,time
 from app.db import init_pool, close_pool
 from dotenv import load_dotenv
 
 load_dotenv()
-app = FastAPI(title = "Crypto Portfolio(Warm-up)")
+app = FastAPI(title = "Crypto Portfolio")
 
 app.add_middleware(
     CORSMiddleware,

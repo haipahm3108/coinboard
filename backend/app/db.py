@@ -1,4 +1,3 @@
-# app/db.py
 import os, aiomysql, logging
 from typing import Any, Sequence
 
@@ -10,9 +9,9 @@ def _env(name: str, default: str | None = None) -> str | None:
 
 async def init_pool(app):
     socket_path = _env("DB_UNIX_SOCKET")  
-    user = _env("DB_USER", "root")
+    user = _env("DB_USER", "")
     password = _env("DB_PASS", "")
-    dbname = _env("DB_NAME", "crypto_portfolio")
+    dbname = _env("DB_NAME", "")
 
     kwargs = dict(
         user=user,
