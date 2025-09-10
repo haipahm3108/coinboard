@@ -20,6 +20,7 @@ frontend/.eslintcache
 frontend/coverage/
 frontend/.env
 frontend/.env.*
+!frontend/.env.example
 
 
 # --- Backend (FastAPI/Python) ---
@@ -36,6 +37,9 @@ backend/.env
 backend/.env.*
 !backend/.env.example
 
+!.env.example
+.env
+**/__pycache__/
 
 # --- Caches / temp ---
 **/.cache/
