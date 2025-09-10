@@ -20,15 +20,6 @@ app.add_middleware(
 def ping():
     return {"ok":True, "service":"api", "message":"pong"}
 
-@app.get("/api/health")
-def health():
-    # basic env + time + list a couple routes 
-    return {
-        "ok": True,
-        "time": time.time(),
-        "env": {"COINGECKO_DEMO_API_KEY": bool(os.getenv("CG_API_KEY_REDACTED"))},
-        "routes_expected": ["/api/coins", "/api/coins/{cg_id}/chart", "/api/ping"],
-    }
 
 @app.on_event("startup")
 async def _on_start(): await init_pool(app)

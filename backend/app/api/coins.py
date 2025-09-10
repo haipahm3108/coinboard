@@ -3,10 +3,11 @@ import httpx, os, time
 from dataclasses import dataclass
 from typing import  Optional,Any
 
+
 router = APIRouter()
 CG_API_KEY = os.getenv("COINGECKO_API_KEY", "").strip()
 BASE = "https://api.coingecko.com/api/v3"
-HEADERS = {"accept": CG_API_KEY} if CG_API_KEY else {}
+HEADERS = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
 
 
 # TTL cache creation -> Pls check on this later to trully understand future me
