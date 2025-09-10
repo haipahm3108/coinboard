@@ -47,8 +47,8 @@
 @media (prefers-color-scheme: dark) {
   .wrap { background: color-mix(in srgb, #763535 0%, transparent);
           border-bottom-color: rgba(255,255,255,0.08);}
-  .tab:hover { background: #ffffff }
+  .tab:hover { background: #ffffff 50%, transparent }
   .active { background: #2563eb; border-color: #2563eb; }
-  .loginBtn { background: #1043c6; color: #e2e8f0; border-color: rgba(255,255,255,0.12); }
-  .loginBtn:hover { background: #b9ace3; }
+  .loginBtn { background: #ae4deb; color: #ffffff; border-color: rgba(255,255,255,0.12); }
+  .loginBtn:hover { background: #ffffff; color: #000000; }
 }
