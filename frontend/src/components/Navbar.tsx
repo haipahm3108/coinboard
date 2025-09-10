@@ -32,7 +32,7 @@ export default function Navbar({
             role="button"
             tabIndex={0}
             onClick={() => onNav("home")}
-          >Crypto Portfolio
+          >CryptoMarketCap &hearts;
           </div>
           <nav className={styles.nav} aria-label="Primary">
             <button

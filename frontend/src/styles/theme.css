@@ -2,7 +2,7 @@
 :root{
   /* text + panel surface */
   --fg: #e2e8f0;
-  --panel-bg: rgba(255, 255, 255, 0.04);
+  /*--panel-bg: rgba(255, 255, 255, 0.04);*/
   --panel-border: rgba(255,255,255,0.08);
 
   /* background layers */
@@ -28,10 +28,10 @@ body {
   background-size: cover;
 }
 
-/* Optional: links slightly brighter */
-a { color: #93c5fd; }
-a:hover { color: #bfdbfe; }
-
+/* Optional: links slightly brighter 
+a { color: #394756; }
+a:hover { color: #438ee9; }
+*/
 button { background: #1043c6; 
     color: #e2e8f0; 
     border-color: rgba(255,255,255,0.12); }

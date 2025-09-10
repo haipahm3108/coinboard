@@ -4,7 +4,8 @@ import {  getNews,
   type NewsItem,
   type CoinMarket, 
   type MarketChart,
-  getPing, getMarkets, getChart,
+  //getPing 
+  getMarkets, getChart,
   getServerWatchlist, addServerWatch, delServerWatch } from "./lib/api";
 import MarketsTable from "./components/MarketsTable";
 import PriceChart from "./components/PriceCharts";
@@ -52,7 +53,7 @@ export default function App() {
   // Bbounce out of watchlist if logged out
   // if logged out while on watchlist tab, go home
   useEffect(() => { if (!isAuthenticated && onlyWatch) setOnlyWatch(false); }, [isAuthenticated, onlyWatch]);
-  const ping = useQuery({ queryKey: ["ping"], queryFn: getPing });
+  //const ping = useQuery({ queryKey: ["ping"], queryFn: getPing }); //const for ping the api
   
   
 
@@ -103,7 +104,7 @@ const clearWatchlist = async () => {
     staleTime: 60_000,
   });
   
-  //news state
+  
   const [newsCount, setNewsCount] = useState(8);
 
   const news = useQuery<NewsItem[]> (
@@ -133,7 +134,7 @@ const clearWatchlist = async () => {
     },
     initialData: [],
   });
-  // toggle ⭐ (require login)
+  // toggle  (require login)
   const toggleWatch = useMutation({
     mutationFn: async (id: string) => {
       if (!isAuthenticated) {
@@ -198,9 +199,9 @@ const clearWatchlist = async () => {
     <div style={{ fontFamily: "system-ui, serif", padding: 24 }}>
 
      
-      <h1>Crypto Portfolio (Warm-up)</h1>
-
-      {/* Ping (optional) */}
+      <h1>CryptoMarketCap &hearts;</h1>
+      
+      {/* Ping (ping api test) 
       <div style={{ marginBottom: 12 }}>
         <button onClick={() => ping.refetch()} disabled={ping.isFetching}>
           {ping.isFetching ? "Checking..." : "Check /api/ping"}
@@ -212,7 +213,7 @@ const clearWatchlist = async () => {
           {ping.data.message}
         </span>}
       </div>
-
+      */}
       
       {/* 
       <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>

@@ -18,9 +18,7 @@ type Props = {
   featureEvery?: number; // only for "pattern"
 };
 
-function host(url: string) {
-  try { return new URL(url).hostname.replace(/^www\./, ""); } catch { return ""; }
-}
+
 
 export default function NewsList({ items, layout = "grid", featureEvery = 6 }: Props) {
   if (!items.length) return <p style={{ opacity: .7 }}>No news.</p>;
