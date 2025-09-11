@@ -26,7 +26,8 @@ Web: http://localhost:5137
 API: http://localhost:8000/docs
 (FastAPI docs)
 
-![Uploading Screenshot 2025-09-12 at 00.56.07.png…]()
+<img width="1897" height="962" alt="Screenshot 2025-09-12 at 00 56 07" src="https://github.com/user-attachments/assets/483c3891-276a-43c0-9849-d52c74a653cf" />
+
 
 <a name="Features"></a>
 ## 2. Features
