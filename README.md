@@ -37,6 +37,7 @@ API: http://localhost:8000/docs
 <li>✅ <strong>Dockerize</strong>: One docker compose up for db, api, and web </li>
 <li> 🚧 <strong>Planned</strong>: AWS deployment, NLP for news sentiment </li>
 
+
 <strong>How to use</strong>
 
 <li> Open the app, view top markets</li>
