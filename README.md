@@ -193,11 +193,11 @@ If error:
 
 ```-GET     /api/news``` - News section 
  
-```-GET /api/me/watchlist``` - Watchlist (auth)
+```-GET     /api/me/watchlist``` - Watchlist (auth)
 
-```-POST /api/me/watchlist```  - Add to watchlist (auth)
+```-POST    /api/me/watchlist```  - Add to watchlist (auth)
 
-```-DELETE /api/me/watchlist``` - Delete in watchlist (auth)
+```-DELETE  /api/me/watchlist``` - Delete in watchlist (auth)
 
 
 
