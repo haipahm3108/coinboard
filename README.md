@@ -26,6 +26,8 @@ Web: http://localhost:5137
 API: http://localhost:8000/docs
 (FastAPI docs)
 
+![Uploading Screenshot 2025-09-12 at 00.56.07.png…]()
+
 <a name="Features"></a>
 ## 2. Features
 
