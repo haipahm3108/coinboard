@@ -68,7 +68,8 @@ API: http://localhost:8000/docs
 <a name="Architecture"></a>
 ## 4. Architecture
 
-sometext
+<img width="913" height="459" alt="image" src="https://github.com/user-attachments/assets/6f143aba-6a7b-4e57-8f9b-19723fd816d9" />
+
 
 <a name="Quick-start"></a>
 ## 5. Quick start (local).
