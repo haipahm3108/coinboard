@@ -1,4 +1,7 @@
-![Static Badge](https://img.shields.io/badge/python-blue)
+![Static Badge](https://img.shields.io/badge/Python-white?logo=python&logoColor=blue) ![Static Badge](https://img.shields.io/badge/npm-white) ![Static Badge](https://img.shields.io/badge/Docker-white?logo=docker&logoColor=blue) ![Static Badge](https://img.shields.io/badge/React-white?logo=react&logoColor=blue) ![Static Badge](https://img.shields.io/badge/FastAPI-white?logo=fastapi&logoColor=green) ![Static Badge](https://img.shields.io/badge/MySQL-white?logo=mysql&logoColor=blue)
+
+
+
 
 # About this project 
 A learning project that lets user explore crypto markets, view price charts, read curated crypto news. The project is built to showcase knowledge of full-stack stack (React + FastAPI + MySQL + Docker) and some modern practices (Auth0, API usage, some cahing and scraping).
