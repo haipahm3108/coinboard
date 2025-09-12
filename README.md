@@ -20,8 +20,7 @@ Why this project exits: I'm building a portfolio piece that solves a real use ca
 8. [Auth (Auth0)    ](#Auth0)
 9. [Database    ](#Database)
 10. [API endpoints    ](#endpoints)
-11. [Usage    ](#usage)
-12. [Roadmap    ](#roadmap)
+
 
 <a name="Demo"></a>
 ## 1. Demo
