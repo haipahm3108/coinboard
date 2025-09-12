@@ -36,7 +36,7 @@ API: http://localhost:8000/docs
 <li>✅ <strong>Caching</strong>: Simple TTL caches for CoinGecko + feeds to reduce latency and rate-limit pressure </li>
 <li>✅ <strong>Dockerize</strong>: One docker compose up for db, api, and web </li>
 <li> 🚧 <strong>Planned</strong>: AWS deployment, NLP for news sentiment </li>
-
+<br>
 <strong>How to use</strong>
 
 <li> Open the app, view top markets</li>
