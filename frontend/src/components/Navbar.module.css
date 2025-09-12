@@ -40,7 +40,7 @@
 .loginBtn {
   padding: 8px 12px; border-radius: 999px;
   border: 1px solid rgba(64, 83, 230, 0.12);
-  background: #44dbc7; cursor: pointer; font-weight: 600;
+  background: #ae4deb; cursor: pointer; font-weight: 600;
 }
 .loginBtn:hover { background: #f1f5f9; }
 
