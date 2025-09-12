@@ -1,3 +1,5 @@
+![Static Badge](https://img.shields.io/badge/python-blue)
+
 # About this project 
 A learning project that lets user explore crypto markets, view price charts, read curated crypto news. The project is built to showcase knowledge of full-stack stack (React + FastAPI + MySQL + Docker) and some modern practices (Auth0, API usage, some cahing and scraping).
 
