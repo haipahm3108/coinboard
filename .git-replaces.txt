@@ -1,0 +1,3 @@
+# Replace the exact leaked value with a placeholder across history
+# Format: literal==>replacement
+CG-GvdXkVrB34Bk6YpaEU4Dn8e5==>CG_API_KEY_REDACTED
