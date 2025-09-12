@@ -76,7 +76,7 @@ API: http://localhost:8000/docs
 **1. Clone**
 ```bash
 git clone <HTTPS/SSH>
-cd CryptoMarketCap-Project
+cd coinboard
 ```
 
 **2. Backend**
