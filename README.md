@@ -1,3 +1,8 @@
+![Static Badge](https://img.shields.io/badge/Python-white?logo=python&logoColor=blue) ![Static Badge](https://img.shields.io/badge/npm-white) ![Static Badge](https://img.shields.io/badge/Docker-white?logo=docker&logoColor=blue) ![Static Badge](https://img.shields.io/badge/React-white?logo=react&logoColor=blue) ![Static Badge](https://img.shields.io/badge/FastAPI-white?logo=fastapi&logoColor=green) ![Static Badge](https://img.shields.io/badge/MySQL-white?logo=mysql&logoColor=blue)
+
+
+
+
 # About this project 
 A learning project that lets user explore crypto markets, view price charts, read curated crypto news. The project is built to showcase knowledge of full-stack stack (React + FastAPI + MySQL + Docker) and some modern practices (Auth0, API usage, some cahing and scraping).
 
@@ -26,10 +31,13 @@ Web: http://localhost:5137
 API: http://localhost:8000/docs
 (FastAPI docs)
 
+<img width="1897" height="962" alt="Screenshot 2025-09-12 at 00 56 07" src="https://github.com/user-attachments/assets/483c3891-276a-43c0-9849-d52c74a653cf" />
+
+
 <a name="Features"></a>
 ## 2. Features
 
-<li>✅ <strong>Markets</strong>: Top coins prices with 24h % change </li>
+<li>✅ Markets: Top coins prices with 24h % change </li>
 <li>✅ <strong>Charts</strong>: 1D/7D/30D line charts </li>
 <li>✅ <strong>Watchlist</strong>: Star coins when logged. Stared coins stay in user watchlist </li>
 <li>✅ <strong>News</strong>: Clean RSS feed(CoinTelegraph, Decrypt) with summaries </li>
@@ -192,11 +200,11 @@ If error:
 
 ```-GET     /api/news``` - News section 
  
-```-GET /api/me/watchlist``` - Watchlist (auth)
+```-GET     /api/me/watchlist``` - Watchlist (auth)
 
-```-POST /api/me/watchlist```  - Add to watchlist (auth)
+```-POST    /api/me/watchlist```  - Add to watchlist (auth)
 
-```-DELETE /api/me/watchlist``` - Delete in watchlist (auth)
+```-DELETE  /api/me/watchlist``` - Delete in watchlist (auth)
 
 
 
