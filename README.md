@@ -168,7 +168,7 @@ Demo login
 * password: Dev012345
 > This is a non-sensitive demo account created only for this project.
 
-> **Privacy note**: Auth0 automatically records basic security metadata such as IP address and login time in its dashboard -> This is only visible to the project maintainer. I do not use, store, or process this information in any way. It remains only within Auth0’s built-in logs. I regularly refresh demo credentials (create a new demo user and delete the old one), so if the above login stops working, please check the repo for the latest credentials.
+> **Privacy note**: Auth0 automatically records basic security metadata such as IP address and login time in its dashboard -> This is only visible to the project maintainer. I do not use, store, or process this information in any way. I regularly refresh demo credentials (create a new demo user and delete the old one), so if the above login stops working, please check the repo for the latest credentials.
 
 <a name="Database"></a>
 ## 9. Database
