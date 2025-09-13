@@ -6,7 +6,7 @@
 # About this project 
 A learning project that lets user explore crypto markets, view price charts, read curated crypto news. The project is built to showcase knowledge of full-stack stack (React + FastAPI + MySQL + Docker) and some modern practices (Auth0, API usage, some cahing and scraping).
 
-Why this project exits: I'm building a portfolio piece that solves a real use case-track coins you care about and at the same time demonstrating and practing design with clean architecture, API integration, and production-style packaging via Docker. 
+Why this project exits: I'm building a portfolio piece that solves a real use case-track coins you care about and at the same time demonstrating and practicing design with clean architecture, API integration, and production-style packaging via Docker. 
 
 # Table of Contents
 
