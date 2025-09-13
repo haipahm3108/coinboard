@@ -4,19 +4,19 @@
 
 
 # About this project 
-A learning project that lets user explore crypto markets, view price charts, read curated crypto news. The project is built to showcase knowledge of full-stack stack (React + FastAPI + MySQL + Docker) and some modern practices (Auth0, API usage, some cahing and scraping).
+A learning project that lets user explore crypto markets, view price charts, read curated crypto news. The project is built to showcase knowledge of full-stack stack (React + FastAPI + MySQL + Docker) and some modern practices (Auth0, API usage, some caching and scraping).
 
-Why this project exits: I'm building a portfolio piece that solves a real use case-track coins you care about and at the same time demonstrating and practicing design with clean architecture, API integration, and production-style packaging via Docker. 
+Why this project exists: I'm building a portfolio piece that solves a real use case-track coins you care about and at the same time demonstrating and practicing design with clean architecture, API integration, and production-style packaging via Docker. 
 
 # Table of Contents
 
-1. [Demo.   ](#Demo)
-2. [Features.   ](#Features)
-3. [Tech stack. ](#Techs-stack)
-4. [Architecture.   ](#Architecture)
-5. [Quick start (local).    ](#Quick-start)
-6. [Quick start (docker).   ](#Quick-start-docker)
-7. [Environment variables.  ](#envs)
+1. [Demo   ](#Demo)
+2. [Features   ](#Features)
+3. [Tech stack ](#Tech-stack)
+4. [Architecture   ](#Architecture)
+5. [Quick start (local)    ](#Quick-start)
+6. [Quick start (docker)   ](#Quick-start-docker)
+7. [Environment variables  ](#envs)
 8. [Auth (Auth0)    ](#Auth0)
 9. [Database    ](#Database)
 10. [API endpoints    ](#endpoints)
@@ -38,7 +38,7 @@ API: http://localhost:8000/docs
 
 <li>✅ <strong>Markets</strong>: Top coins prices with 24h % change </li>
 <li>✅ <strong>Charts</strong>: 1D/7D/30D line charts </li>
-<li>✅ <strong>Watchlist</strong>: Star coins when logged. Stared coins stay in user watchlist </li>
+<li>✅ <strong>Watchlist</strong>: Star coins when logged. Starred coins stay in user watchlist </li>
 <li>✅ <strong>News</strong>: Clean RSS feed(CoinTelegraph, Decrypt) with summaries </li>
 <li> 🚧 <strong>Planned</strong>: AWS deployment, NLP for news sentiment </li>
 <br>
@@ -51,8 +51,8 @@ API: http://localhost:8000/docs
 <li>Clear all coins in watchlist with clear watchlist button</li>
 <li>Read News section on Home</li>
 
-<a name="Techs-stack"></a>
-## 3. Tech stack.
+<a name="Tech-stack"></a>
+## 3. Tech stack
 
 <li> <strong>Frontend</strong>: React + Vite + Typescript, Recharts and react-query</li>
 <li> <strong>Backend</strong>: FastAPI, PyJWT, feedparser, httpx </li>
@@ -69,7 +69,7 @@ API: http://localhost:8000/docs
 
 
 <a name="Quick-start"></a>
-## 5. Quick start (local).
+## 5. Quick start (local)
 
 **1. Clone**
 ```bash
@@ -99,7 +99,7 @@ in ```docker-compose``` ``` ${SERVER_PORT_DB:-3307}:3306```
 
 
 <a name="Quick-start-docker"></a>
-## 6. Quick start (docker).
+## 6. Quick start (docker)
 ```bash
 cp backend/.env.example backend/.env.docker
 cp .env.example .env    #root env use for docker-compose
@@ -107,20 +107,20 @@ docker compose build
 docker compose up
 #web: http://localhost:5173 | api:http://localhost:8000
 ```
-> Recomended to install docker desktop for clean ui and easy to check and open port in containers
+> Recommended to install Docker Desktop for a clean UI and easy to check and open ports in containers
 
 <a name="#envs"></a>
-## 7. Environment variables.
+## 7. Environment variables
 ```backend/.env.example```
 ```bash
-#Below this is varible for MySQL Database
+#Below this is variable for MySQL Database
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_USER=change_me
 DB_PASS=change_me
 DB_NAME=crypto_portfolio1
 
-# Allow frontend orgini
+# Allow frontend origin
 CORS_ORIGINS=http://localhost:5173
 
 # This is Auth0 setup (public)
@@ -155,14 +155,20 @@ VITE_AUTH0_AUDIENCE=https://api.crypto.auth
 
 In Auth0 Application setting (for Single Page Application):
 
-* Allowed callback URLs: ```http://localhost:5171```
-* Allowed logout URLs: ```http://localhost:5171```
+* Allowed callback URLs: ```http://localhost:5173```
+* Allowed logout URLs: ```http://localhost:5173```
 
 In Auth0 API setting :
 * Audience: ```https://api.crypto.auth```
 
 Frontend uses ```@auth0/auth0-react```. Backend check Authorization tokens with PyJWT
 
+Demo login
+* user: test-user@example.com
+* password: Dev012345
+> This is a non-sensitive demo account created only for this project.
+
+> **Privacy note**: Auth0 automatically records basic security metadata such as IP address and login time in its dashboard -> This is only visible to the project maintainer. I do not use, store, or process this information in any way. It remains only within Auth0’s built-in logs. I regularly refresh demo credentials (create a new demo user and delete the old one), so if the above login stops working, please check the repo for the latest credentials.
 
 <a name="Database"></a>
 ## 9. Database
