@@ -40,8 +40,6 @@ API: http://localhost:8000/docs
 <li>✅ <strong>Charts</strong>: 1D/7D/30D line charts </li>
 <li>✅ <strong>Watchlist</strong>: Star coins when logged. Stared coins stay in user watchlist </li>
 <li>✅ <strong>News</strong>: Clean RSS feed(CoinTelegraph, Decrypt) with summaries </li>
-<li>✅ <strong>Caching</strong>: Simple TTL caches for CoinGecko + feeds to reduce latency and rate-limit pressure </li>
-<li>✅ <strong>Dockerize</strong>: One docker compose up for db, api, and web </li>
 <li> 🚧 <strong>Planned</strong>: AWS deployment, NLP for news sentiment </li>
 <br>
 <strong>How to use</strong>
