@@ -133,21 +133,12 @@ COINGECKO_API_KEY=insert_key_here
 
 ```frontend/.env.example```
 ```bash
-# MySQL bootstrap (for the mysql:8 container) 
-MYSQL_ROOT_PASSWORD=change_me_root
-DB_NAME=crypto_portfolio1
-DB_USER=app_user
-DB_PASS=change_me_app
-
-# map DB container’s 3306 to your host port (avoid clash with local MySQL)
-SERVER_PORT_DB=3307
-
-# frontend build-time
 VITE_API_URL=http://localhost:8000
-# Authentication
+
 VITE_AUTH0_DOMAIN=dev-nqlbwx3nwspba7ep.us.auth0.com
 VITE_AUTH0_CLIENT_ID=n9NMR0AwyEhpVVpJ5tZJsWnT1pkfATUL
 VITE_AUTH0_AUDIENCE=https://api.crypto.auth
+
 ```
 
 <a name="Auth0"></a>
